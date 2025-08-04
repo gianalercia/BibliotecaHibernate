@@ -1,70 +1,64 @@
 package com.mycompany.sistemadegestiondelibrosbibliioteca.config;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
+/**
+ * HibernateUtil - Gestión del SessionFactory de Hibernate
+ * Reemplaza la configuración JDBC manual
+ */
 public class HibernateUtil {
 
-    private static SessionFactory sessionFactory;
-    private static StandardServiceRegistry registry;
+    private static SessionFactory sessionFactory = null;
+    private static boolean inicializado = false;
 
-    static {
-        try {
-            inicializarSessionFactory();
-        } catch (Exception e) {
-            System.err.println("Error inicializando SessionFactory: " + e.getMessage());
-            throw new ExceptionInInitializerError("Error inicializando Hibernate: " + e.getMessage());
+    /**
+     * Inicializar Hibernate SessionFactory
+     */
+    public static void inicializar() {
+        if (inicializado && sessionFactory != null && !sessionFactory.isClosed()) {
+            return;
         }
-    }
 
-    private static void inicializarSessionFactory() {
         try {
+            // Crear SessionFactory desde hibernate.cfg.xml
             Configuration configuration = new Configuration();
             configuration.configure("hibernate.cfg.xml");
 
-            // AGREGAR: Asegurar que se escanee la entidad
-            configuration.addAnnotatedClass(com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity.Libro.class);
+            sessionFactory = configuration.buildSessionFactory();
+            inicializado = true;
 
-            registry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties())
-                    .build();
-
-            sessionFactory = configuration.buildSessionFactory(registry);
-
-            // Verificar conexión
-            sessionFactory.openSession().close();
+            System.out.println("✅ Hibernate inicializado correctamente");
+            System.out.println("📂 Base de datos: biblioteca.db");
 
         } catch (Exception e) {
-            if (registry != null) {
-                StandardServiceRegistryBuilder.destroy(registry);
-            }
-            throw new RuntimeException("No se pudo inicializar Hibernate: " + e.getMessage(), e);
+            System.err.println("❌ Error inicializando Hibernate: " + e.getMessage());
+            throw new ExceptionInInitializerError(e);
         }
     }
 
+    /**
+     * Obtener SessionFactory
+     */
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null || sessionFactory.isClosed()) {
-            inicializarSessionFactory();
+        if (!inicializado || sessionFactory == null || sessionFactory.isClosed()) {
+            inicializar();
         }
         return sessionFactory;
     }
 
-    public static void shutdown() {
+    /**
+     * Cerrar SessionFactory
+     */
+    public static void cerrarSessionFactory() {
         try {
             if (sessionFactory != null && !sessionFactory.isClosed()) {
                 sessionFactory.close();
-            }
-            if (registry != null) {
-                StandardServiceRegistryBuilder.destroy(registry);
+                inicializado = false;
+                System.out.println("✅ Hibernate cerrado correctamente");
             }
         } catch (Exception e) {
-            System.err.println("Error al cerrar Hibernate: " + e.getMessage());
+            System.err.println("❌ Error cerrando Hibernate: " + e.getMessage());
         }
-    }
-
-    public static boolean isActive() {
-        return sessionFactory != null && !sessionFactory.isClosed();
     }
 }

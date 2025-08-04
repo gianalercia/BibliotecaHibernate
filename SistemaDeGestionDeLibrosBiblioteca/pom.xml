@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.biblioteca</groupId>
-    <artifactId>biblioteca-hibernate-dao</artifactId>
+    <artifactId>biblioteca-hibernate</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -15,16 +15,24 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hibernate.version>6.2.7.Final</hibernate.version>
     </properties>
 
     <dependencies>
 
-        <!-- Hibernate Core 5.x -->
+        <!-- Hibernate Core (incluye jakarta.persistence automáticamente) -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.6.15.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
 
         <!-- SQLite JDBC Driver -->
         <dependency>
@@ -33,6 +41,12 @@
             <version>3.42.0.0</version>
         </dependency>
 
+        <!-- Hibernate SQLite Dialect -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -56,10 +70,9 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.mycompany.sistemadegestiondelibrosbiblioteca.BibliotecaApp</mainClass>
+                    <mainClass>com.biblioteca.BibliotecaApp</mainClass>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>

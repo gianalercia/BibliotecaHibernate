@@ -5,24 +5,31 @@
 
 <hibernate-configuration>
     <session-factory>
-
+        <!-- Configuración de la base de datos SQLite -->
         <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
         <property name="hibernate.connection.url">jdbc:sqlite:biblioteca.db</property>
 
-        <!-- CAMBIAR ESTE DIALECTO -->
-        <property name="hibernate.dialect">org.hibernate.dialect.SQLiteDialect</property>
+        <!-- Dialecto SQLite -->
+        <property name="hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
 
-        <property name="hibernate.hbm2ddl.auto">update</property>
-
-        <property name="hibernate.show_sql">false</property>
-        <property name="hibernate.format_sql">false</property>
-
-        <property name="hibernate.current_session_context_class">thread</property>
+        <!-- Configuración de la pool de conexiones -->
         <property name="hibernate.connection.pool_size">1</property>
 
-        <property name="hibernate.archive.autodetection">class</property>
-        <property name="hibernate.packagesToScan">com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity</property>
+        <!-- Mostrar SQL en consola (útil para debugging) -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
 
+        <!-- Configuración de DDL -->
+        <property name="hibernate.hbm2ddl.auto">create-drop</property>
+
+        <!-- Configuración específica para SQLite -->
+        <property name="hibernate.id.new_generator_mappings">true</property>
+        <property name="hibernate.globally_quoted_identifiers">false</property>
+
+        <!-- Configuración de transacciones -->
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- Mapeo de entidades -->
         <mapping class="com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity.Libro"/>
 
     </session-factory>

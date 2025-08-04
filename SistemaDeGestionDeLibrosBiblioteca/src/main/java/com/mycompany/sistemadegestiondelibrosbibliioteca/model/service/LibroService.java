@@ -1,28 +1,32 @@
 package com.mycompany.sistemadegestiondelibrosbibliioteca.model.service;
 
 import com.mycompany.sistemadegestiondelibrosbibliioteca.model.dao.ILibroDAO;
-import com.mycompany.sistemadegestiondelibrosbibliioteca.model.dao.LibroDAOHibernateImpl;
+import com.mycompany.sistemadegestiondelibrosbibliioteca.model.dao.LibroDAOImpl;
 import com.mycompany.sistemadegestiondelibrosbibliioteca.model.dto.LibroDTO;
 import com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity.Libro;
-
-import java.time.Year;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * LibroService - Capa de lógica de negocio
+ * Adaptado para trabajar con Hibernate ORM
+ * Mantiene todas las validaciones y funcionalidad original
+ */
 public class LibroService {
 
-    private final ILibroDAO libroDAO;
+    private ILibroDAO libroDAO;
 
     public LibroService() {
-        this.libroDAO = new LibroDAOHibernateImpl();
+        this.libroDAO = new LibroDAOImpl();
     }
 
-    public LibroService(ILibroDAO libroDAO) {
-        this.libroDAO = libroDAO;
-    }
-
+    /**
+     * Obtener libro por ID
+     * Adaptado para Hibernate - sin cambios en lógica de negocio
+     */
     public LibroDTO obtenerLibroPorId(Long id) {
+        // Validaciones básicas (sin cambios)
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo");
         }
@@ -32,6 +36,7 @@ public class LibroService {
         }
 
         try {
+            // Hibernate DAO maneja automáticamente la sesión
             Optional<Libro> libroOpt = libroDAO.read(id);
 
             if (!libroOpt.isPresent()) {
@@ -44,22 +49,30 @@ public class LibroService {
             if (e instanceof IllegalArgumentException || e instanceof RuntimeException) {
                 throw e;
             }
-            throw new RuntimeException("Error accediendo a la base de datos: " + e.getMessage());
+            // Hibernate maneja las excepciones de base de datos automáticamente
+            throw new RuntimeException("Error accediendo a los datos: " + e.getMessage());
         }
     }
 
+    /**
+     * Agregar nuevo libro
+     * Adaptado para Hibernate - validaciones de negocio conservadas
+     */
     public LibroDTO agregarLibro(String titulo, String autor, String anoPublicacionStr) {
+        // Validaciones de negocio (sin cambios)
         validarTitulo(titulo);
         validarAutor(autor);
         Integer anoPublicacion = validarAnoPublicacion(anoPublicacionStr);
 
         try {
+            // Crear entidad
             Libro nuevoLibro = new Libro();
             nuevoLibro.setTitulo(titulo.trim());
             nuevoLibro.setAutor(autor.trim());
             nuevoLibro.setAnoPublicacion(anoPublicacion);
             nuevoLibro.setDisponible(true);
 
+            // Hibernate DAO con transacciones automáticas
             Libro libroGuardado = libroDAO.create(nuevoLibro);
 
             return convertirADTO(libroGuardado);
@@ -68,11 +81,17 @@ public class LibroService {
             if (e instanceof IllegalArgumentException || e instanceof RuntimeException) {
                 throw e;
             }
+            // Hibernate maneja rollback automático en caso de error
             throw new RuntimeException("Error guardando libro: " + e.getMessage());
         }
     }
 
+    /**
+     * Actualizar libro existente
+     * Adaptado para Hibernate - aprovecha dirty checking automático
+     */
     public LibroDTO actualizarLibro(Long id, String titulo, String autor, String anoPublicacionStr) {
+        // Validaciones (sin cambios)
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para actualizar");
         }
@@ -82,16 +101,19 @@ public class LibroService {
         Integer anoPublicacion = validarAnoPublicacion(anoPublicacionStr);
 
         try {
+            // Verificar que existe usando Hibernate
             Optional<Libro> existente = libroDAO.read(id);
             if (!existente.isPresent()) {
                 throw new RuntimeException("Libro no encontrado para actualizar");
             }
 
+            // Actualizar datos
             Libro libro = existente.get();
             libro.setTitulo(titulo.trim());
             libro.setAutor(autor.trim());
             libro.setAnoPublicacion(anoPublicacion);
 
+            // Hibernate detecta cambios automáticamente (dirty checking)
             Libro actualizado = libroDAO.update(libro);
 
             return convertirADTO(actualizado);
@@ -100,34 +122,54 @@ public class LibroService {
             if (e instanceof IllegalArgumentException || e instanceof RuntimeException) {
                 throw e;
             }
+            // Hibernate maneja transacciones y rollback automático
             throw new RuntimeException("Error actualizando libro: " + e.getMessage());
         }
     }
 
+    /**
+     * Eliminar libro por ID
+     * Adaptado para Hibernate - transacciones automáticas
+     */
     public boolean eliminarLibro(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID inválido para eliminar");
         }
 
         try {
+            // Hibernate maneja la transacción automáticamente
             return libroDAO.delete(id);
         } catch (Exception e) {
             throw new RuntimeException("Error eliminando libro: " + e.getMessage());
         }
     }
 
+    /**
+     * Obtener todos los libros
+     * Adaptado para Hibernate - usa HQL optimizado
+     */
     public List<LibroDTO> obtenerTodosLosLibros() {
         try {
+            // Hibernate optimiza la consulta automáticamente
             List<Libro> libros = libroDAO.readAll();
+            List<LibroDTO> librosDTO = new ArrayList<>();
 
-            return libros.stream()
-                    .map(this::convertirADTO)
-                    .collect(Collectors.toList());
+            // Conversión eficiente con Hibernate lazy loading
+            for (Libro libro : libros) {
+                librosDTO.add(convertirADTO(libro));
+            }
+
+            return librosDTO;
 
         } catch (Exception e) {
             throw new RuntimeException("Error listando libros: " + e.getMessage());
         }
     }
+
+    // ========================================================================
+    // MÉTODOS PRIVADOS DE VALIDACIÓN (SIN CAMBIOS)
+    // Las validaciones de negocio se mantienen independientes del ORM
+    // ========================================================================
 
     private void validarTitulo(String titulo) {
         if (titulo == null || titulo.trim().isEmpty()) {
@@ -173,7 +215,7 @@ public class LibroService {
             throw new IllegalArgumentException("El año de publicación debe ser válido");
         }
 
-        int anoActual = Year.now().getValue();
+        int anoActual = java.time.Year.now().getValue();
         if (anoPublicacion > anoActual) {
             throw new IllegalArgumentException("El año de publicación no puede ser futuro");
         }
@@ -185,6 +227,10 @@ public class LibroService {
         return anoPublicacion;
     }
 
+    /**
+     * Convertir Entity a DTO
+     * Sin cambios - independiente del ORM utilizado
+     */
     private LibroDTO convertirADTO(Libro libro) {
         return new LibroDTO(
                 libro.getId(),
