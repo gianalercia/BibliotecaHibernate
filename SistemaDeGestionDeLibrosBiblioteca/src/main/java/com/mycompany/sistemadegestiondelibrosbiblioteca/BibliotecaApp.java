@@ -43,7 +43,7 @@ public class BibliotecaApp {
             System.out.println("=".repeat(50));
             System.out.println("📖 POST #2:");
             try {
-                Libro libro2 = controller.agregarLibro("Choque de reyes", "George R.R. Martin", 1998);
+                Libro libro2 = controller.agregarLibro("Festin de cuervos", "George R.R. Martin", 1998);
                 System.out.println("✅ Main: Libro recibido del Controller: " + libro2);
             } catch (Exception e) {
                 System.out.println("❌ Main: Error capturado: " + e.getMessage());
