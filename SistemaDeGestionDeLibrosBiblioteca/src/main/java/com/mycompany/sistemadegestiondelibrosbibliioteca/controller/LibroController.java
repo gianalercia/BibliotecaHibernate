@@ -28,8 +28,6 @@ public class LibroController {
      */
     public Libro agregarLibro(String titulo, String autor, Integer anoPublicacion) {
         try {
-            System.out.println("🎯 Controller: Procesando POST /libros");
-
             // Coordina con el SERVICE para crear el libro
             Libro nuevoLibro = libroService.agregarLibro(titulo, autor, anoPublicacion);
 

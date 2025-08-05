@@ -19,10 +19,9 @@ public class BibliotecaApp {
         try {
             // Inicializar Hibernate
             HibernateUtil.inicializar();
-            System.out.println("🚀 Sistema de Gestión de Libros - POST con Hibernate + MVC");
+            System.out.println("🚀 Sistema de Gestión de Libros - POST con Hibernate");
             System.out.println("=".repeat(65));
             System.out.println("📋 Arquitectura: Main → Controller → Service → DAO → Hibernate → SQLite");
-            System.out.println("📋 Funcionalidad: Solo POST con validación de duplicados");
 
             // Crear Controller (que coordina Service y View internamente)
             LibroController controller = new LibroController();
@@ -32,9 +31,9 @@ public class BibliotecaApp {
 
             // Libro 1
             System.out.println("=".repeat(50));
-            System.out.println("📖 POST #1: Agregando 'Carrie'");
+            System.out.println("📖 POST #1:");
             try {
-                Libro libro1 = controller.agregarLibro("Carrie", "Stephen King", 1974);
+                Libro libro1 = controller.agregarLibro("Colorado Kid", "Stephen King", 1974);
                 System.out.println("✅ Main: Libro recibido del Controller: " + libro1);
             } catch (Exception e) {
                 System.out.println("❌ Main: Error capturado: " + e.getMessage());
@@ -42,7 +41,7 @@ public class BibliotecaApp {
 
             // Libro 2
             System.out.println("=".repeat(50));
-            System.out.println("📖 POST #2: Agregando 'Choque de reyes'");
+            System.out.println("📖 POST #2:");
             try {
                 Libro libro2 = controller.agregarLibro("Choque de reyes", "George R.R. Martin", 1998);
                 System.out.println("✅ Main: Libro recibido del Controller: " + libro2);
@@ -52,7 +51,7 @@ public class BibliotecaApp {
 
             // Libro 3
             System.out.println("=".repeat(50));
-            System.out.println("📖 POST #3: Agregando 'El resplandor'");
+            System.out.println("📖 POST #3:");
             try {
                 Libro libro3 = controller.agregarLibro("El resplandor", "Stephen King", 1977);
                 System.out.println("✅ Main: Libro recibido del Controller: " + libro3);
@@ -60,60 +59,8 @@ public class BibliotecaApp {
                 System.out.println("❌ Main: Error capturado: " + e.getMessage());
             }
 
-            // Libro 4 (duplicado para probar validación)
-            System.out.println("=".repeat(50));
-            System.out.println("📖 POST #4: Intentando duplicado 'Carrie' (debe fallar)");
-            try {
-                Libro libro4 = controller.agregarLibro("Carrie", "Stephen King", 1974);
-                System.out.println("✅ Main: Libro recibido del Controller: " + libro4);
-            } catch (Exception e) {
-                System.out.println("❌ Main: Error capturado (esperado): " + e.getMessage());
-            }
-
-            // Libro 5
-            System.out.println("=".repeat(50));
-            System.out.println("📖 POST #5: Agregando '1984'");
-            try {
-                Libro libro5 = controller.agregarLibro("1984", "George Orwell", 1949);
-                System.out.println("✅ Main: Libro recibido del Controller: " + libro5);
-            } catch (Exception e) {
-                System.out.println("❌ Main: Error capturado: " + e.getMessage());
-            }
-
-            // Libro 6 (con error de validación)
-            System.out.println("=".repeat(50));
-            System.out.println("📖 POST #6: Intentando año futuro (debe fallar)");
-            try {
-                Libro libro6 = controller.agregarLibro("Libro del futuro", "Autor X", 2030);
-                System.out.println("✅ Main: Libro recibido del Controller: " + libro6);
-            } catch (Exception e) {
-                System.out.println("❌ Main: Error capturado (esperado): " + e.getMessage());
-            }
-
-            // Libro 7 (título vacío)
-            System.out.println("=".repeat(50));
-            System.out.println("📖 POST #7: Intentando título vacío (debe fallar)");
-            try {
-                Libro libro7 = controller.agregarLibro("", "Autor Y", 2020);
-                System.out.println("✅ Main: Libro recibido del Controller: " + libro7);
-            } catch (Exception e) {
-                System.out.println("❌ Main: Error capturado (esperado): " + e.getMessage());
-            }
-
-            // Libro 8 (exitoso final)
-            System.out.println("=".repeat(50));
-            System.out.println("📖 POST #8: Agregando 'Dune'");
-            try {
-                Libro libro8 = controller.agregarLibro("Dune", "Frank Herbert", 1965);
-                System.out.println("✅ Main: Libro recibido del Controller: " + libro8);
-            } catch (Exception e) {
-                System.out.println("❌ Main: Error capturado: " + e.getMessage());
-            }
-
             System.out.println("\n" + "=".repeat(65));
             System.out.println("✅ Proceso de POST completado");
-            System.out.println("📊 Se procesaron 8 operaciones POST (algunas fallaron intencionalmente)");
-            System.out.println("🔍 Revisa los logs de Hibernate para ver las operaciones SQL");
 
         } catch (Exception e) {
             System.err.println("❌ Error crítico en la aplicación: " + e.getMessage());

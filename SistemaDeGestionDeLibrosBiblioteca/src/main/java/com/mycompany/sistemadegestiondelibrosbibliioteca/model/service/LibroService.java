@@ -17,7 +17,7 @@ public class LibroService {
     }
 
     /**
-     * Agregar nuevo libro - Método principal para POST
+     * Agregar nuevo libro
      */
     public Libro agregarLibro(String titulo, String autor, Integer anoPublicacion) {
         // Validaciones de negocio

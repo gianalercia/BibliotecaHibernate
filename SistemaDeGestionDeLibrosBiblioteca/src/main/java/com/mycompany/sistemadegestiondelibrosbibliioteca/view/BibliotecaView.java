@@ -37,11 +37,4 @@ public class BibliotecaView {
         System.out.println();
     }
 
-    /**
-     * Muestra mensaje de operación exitosa
-     */
-    public void mostrarExito(String mensaje) {
-        System.out.println("📄 VIEW: ✅ " + mensaje);
-        System.out.println();
-    }
 }
