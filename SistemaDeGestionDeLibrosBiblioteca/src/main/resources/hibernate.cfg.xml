@@ -5,29 +5,20 @@
 
 <hibernate-configuration>
     <session-factory>
-        <!-- Configuración de la base de datos SQLite -->
+        <!-- Configuración SQLite -->
         <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
         <property name="hibernate.connection.url">jdbc:sqlite:biblioteca.db</property>
-
-        <!-- Dialecto SQLite -->
         <property name="hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
 
-        <!-- Configuración de la pool de conexiones -->
+        <!-- Pool de conexiones -->
         <property name="hibernate.connection.pool_size">1</property>
 
-        <!-- Mostrar SQL en consola (útil para debugging) -->
+        <!-- Mostrar SQL -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
-        <!-- Configuración de DDL -->
-        <property name="hibernate.hbm2ddl.auto">create-drop</property>
-
-        <!-- Configuración específica para SQLite -->
-        <property name="hibernate.id.new_generator_mappings">true</property>
-        <property name="hibernate.globally_quoted_identifiers">false</property>
-
-        <!-- Configuración de transacciones -->
-        <property name="hibernate.current_session_context_class">thread</property>
+        <!-- DDL: update para mantener datos entre ejecuciones -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Mapeo de entidades -->
         <mapping class="com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity.Libro"/>

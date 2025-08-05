@@ -7,13 +7,11 @@ package com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "libros",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"titulo", "autor"}))
+@Table(name = "libros")
 public class Libro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "titulo", nullable = false, length = 200)
@@ -25,69 +23,30 @@ public class Libro {
     @Column(name = "ano_publicacion", nullable = false)
     private Integer anoPublicacion;
 
-    @Column(name = "disponible", nullable = false)
-    private Boolean disponible = true;
+    // Constructores
+    public Libro() {}
 
-    public Libro() {
-    }
-
-    public Libro(Long id, String titulo, String autor, Integer anoPublicacion, Boolean disponible) {
-        this.id = id;
+    public Libro(String titulo, String autor, Integer anoPublicacion) {
         this.titulo = titulo;
         this.autor = autor;
         this.anoPublicacion = anoPublicacion;
-        this.disponible = disponible;
     }
 
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public String getTitulo() {
-        return titulo;
-    }
+    public String getAutor() { return autor; }
+    public void setAutor(String autor) { this.autor = autor; }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
-
-    public Integer getAnoPublicacion() {
-        return anoPublicacion;
-    }
-
-    public void setAnoPublicacion(Integer anoPublicacion) {
-        this.anoPublicacion = anoPublicacion;
-    }
-
-    public Boolean getDisponible() {
-        return disponible;
-    }
-
-    public void setDisponible(Boolean disponible) {
-        this.disponible = disponible;
-    }
+    public Integer getAnoPublicacion() { return anoPublicacion; }
+    public void setAnoPublicacion(Integer anoPublicacion) { this.anoPublicacion = anoPublicacion; }
 
     @Override
     public String toString() {
-        return "Libro{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", autor='" + autor + '\'' +
-                ", anoPublicacion=" + anoPublicacion +
-                ", disponible=" + disponible +
-                '}';
+        return "Libro{id=" + id + ", titulo='" + titulo + "', autor='" + autor + "', año=" + anoPublicacion + '}';
     }
 }

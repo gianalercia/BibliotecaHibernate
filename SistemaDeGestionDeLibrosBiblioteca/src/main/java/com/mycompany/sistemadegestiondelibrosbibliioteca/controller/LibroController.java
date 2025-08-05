@@ -5,88 +5,51 @@
 package com.mycompany.sistemadegestiondelibrosbibliioteca.controller;
 
 import com.mycompany.sistemadegestiondelibrosbibliioteca.model.service.LibroService;
-import com.mycompany.sistemadegestiondelibrosbibliioteca.model.dto.LibroDTO;
+import com.mycompany.sistemadegestiondelibrosbibliioteca.model.entity.Libro;
 import com.mycompany.sistemadegestiondelibrosbibliioteca.view.BibliotecaView;
 
-import java.util.List;
-
 /**
- * LibroController - Controlador MVC
- * Coordina entre Model (LibroService) y View (BibliotecaView)
- * Maneja endpoints REST y peticiones HTTP
- *
- * @author gian_
+ * LibroController - Controlador simplificado para POST
+ * Coordina entre Service (Model) y View
  */
 public class LibroController {
-    private LibroService libroService;  // Referencia al MODEL
-    private BibliotecaView view;         // Referencia a la VIEW
+    private LibroService libroService;
+    private BibliotecaView view;
 
-    public LibroController(BibliotecaView view) {
+    public LibroController() {
         this.libroService = new LibroService();
-        this.view = view;
+        this.view = new BibliotecaView();
     }
 
-    /**
-     * Endpoint: GET /libros/{id}
-     */
-    public void obtenerLibro(Long id) {
-        try {
-            // Coordina con el MODEL para obtener los datos
-            // TODAS las validaciones están en el Service
-            LibroDTO libro = libroService.obtenerLibroPorId(id);
-
-            // Coordina con la VIEW para mostrar la respuesta exitosa
-            view.mostrarLibroEncontrado(libro);
-
-        } catch (IllegalArgumentException e) {
-            // Error 400 - Bad Request (datos inválidos)
-            view.mostrarError(400, "Datos inválidos: " + e.getMessage());
-
-        } catch (RuntimeException e) {
-            if (e.getMessage().contains("404")) {
-                // Error 404 - Not Found
-                view.mostrarError(404, "Libro no encontrado");
-            } else {
-                // Error 500 - Internal Server Error
-                view.mostrarError(500, "Error interno del servidor");
-            }
-        }
-    }
-
-    public void listarTodosLosLibros() {
-        try {
-            // Coordina con el MODEL para obtener todos los libros
-            List<LibroDTO> libros = libroService.obtenerTodosLosLibros();
-
-            // Coordina con la VIEW para mostrar la lista
-            view.mostrarListaLibros(libros);
-
-        } catch (Exception e) {
-            // Error 500 - Internal Server Error
-            view.mostrarError(500, "Error al obtener la lista de libros: " + e.getMessage());
-        }
-    }
     /**
      * Endpoint: POST /libros
      * Maneja la petición de creación de nuevo libro
-     * Coordina Model y View sin contener lógica de negocio
+     * Coordina Model y View
      */
-    public void agregarLibro(String titulo, String autor, String anoPublicacionStr) {
+    public Libro agregarLibro(String titulo, String autor, Integer anoPublicacion) {
         try {
-            // Coordina con el MODEL para crear el libro
-            // TODAS las validaciones están en el Service
-            LibroDTO nuevoLibro = libroService.agregarLibro(titulo, autor, anoPublicacionStr);
+            System.out.println("🎯 Controller: Procesando POST /libros");
 
-            // Coordina con la VIEW para mostrar la respuesta exitosa (201 Created)
+            // Coordina con el SERVICE para crear el libro
+            Libro nuevoLibro = libroService.agregarLibro(titulo, autor, anoPublicacion);
+
+            // Coordina con la VIEW para mostrar resultado exitoso
             view.mostrarLibroCreado(nuevoLibro);
 
+            System.out.println("🎯 Controller: POST exitoso");
+            return nuevoLibro;
+
         } catch (IllegalArgumentException e) {
-            // Error 400 - Bad Request (datos inválidos)
-            view.mostrarError(400, "Datos inválidos: " + e.getMessage());
+            // Error de validación - mostrar en view y propagar
+            view.mostrarError("Datos inválidos: " + e.getMessage());
+            System.out.println("🎯 Controller: Error de validación");
+            throw e;
 
         } catch (Exception e) {
-            // Error 500 - Internal Server Error
-            view.mostrarError(500, "Error interno del servidor: " + e.getMessage());
+            // Error interno - mostrar en view y propagar
+            view.mostrarError("Error interno: " + e.getMessage());
+            System.out.println("🎯 Controller: Error interno");
+            throw new RuntimeException("Error interno del servidor: " + e.getMessage());
         }
     }
 }
